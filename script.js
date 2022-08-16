@@ -34,17 +34,25 @@ document.addEventListener('keydown', update);
 
 function update(event){
     if(event.keyCode == 37 && direction != "right") direction = "left";
-    if(event.keyCode == 38 && direction != "up") direction = "down";
+    if(event.keyCode == 38 && direction != "down") direction = "up";
     if(event.keyCode == 39 && direction != "left") direction = "right";
-    if(event.keyCode == 40 && direction != "down") direction = "up";
+    if(event.keyCode == 40 && direction != "up") direction = "down";
 }
 
 function iniciarJogo(){
     if(shake[0].x > 15 * box && direction == "right") shake[0].x = 0;
-    if(shake[0].x > 15 * box && direction == "left") shake[0].x = 0;
+    if(shake[0].x < 0 && direction == "left") shake[0].x = 16 * box;
     if(shake[0].y > 15 * box && direction == "down") shake[0].y = 0;
-    if(shake[0].y > 15 * box && direction == "up") shake[0].y = 0;
+    if(shake[0].y < 0 && direction == "up") shake[0].y = 16 * box;
 
+
+    for(let i = 1; i < shake.length; i++){
+        if(shake[0].x == shake[i].x && shake[0].y == shake[i].y){
+            clearInterval(jogo);
+            alert("Game Over! :(");
+            window.location.reload(true);
+        }
+    }
 
     criarBG();
     criarCobrinha();
@@ -54,11 +62,16 @@ function iniciarJogo(){
     let shakeY = shake[0].y;
 
     if(direction == "right"){ shakeX += box;}
-    if(direction == "left"){ shakeX += box;}
-    if(direction == "up"){ shakeY += box;}
+    if(direction == "left"){ shakeX -= box;}
+    if(direction == "up"){ shakeY -= box;}
     if(direction == "down"){ shakeY += box;}
 
-    shake.pop();
+    if(shakeX != food.x || shakeY != food.y){
+        shake.pop();
+    }else{
+        food.x = Math.floor(Math.random() * 15 + 1) * box;
+        food.y = Math.floor(Math.random() * 15 + 1) * box;
+    }
 
     let newhead = {
         x: shakeX,
